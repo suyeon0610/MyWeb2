@@ -1,5 +1,9 @@
 ﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>    
+    
+<%@ include file="../include/header.jsp" %>
+
 
     <section>
         <div class="container">
@@ -12,28 +16,28 @@
                         <form>
                             <div>
                                 <label>DATE</label>
-                                <p>2019-12-12</p>
+                                <p>${article.regdate }</p>
                             </div>   
                             <div class="form-group">
                                 <label>번호</label>
-                                <input class="form-control" name='##' readonly>
+                                <input class="form-control" name='##' value="${article.bno }" readonly>
                             </div>
                             <div class="form-group">
                                 <label>작성자</label>
-                                <input class="form-control" name='##' readonly>
+                                <input class="form-control" name='##' value="${article.writer }" readonly>
                             </div>    
                             <div class="form-group">
                                 <label>제목</label>
-                                <input class="form-control" name='##' readonly>
+                                <input class="form-control" name='##' value="${article.title }" readonly>
                             </div>
 
                             <div class="form-group">
                                 <label>내용</label>
-                                <textarea class="form-control" rows="10" name='##' readonly></textarea>
+                                <textarea class="form-control" rows="10" name='##' readonly>${article.content }</textarea>
                             </div>
 
                             <button type="button" class="btn btn-primary">변경</button>
-                            <button type="button" class="btn btn-dark">목록</button>
+                            <button type="button" id="btn_list" class="btn btn-dark">목록</button>
                     </form>
                 </div>
             </div>
@@ -111,3 +115,13 @@
 			</div>
 		</div>
 	</div>
+	
+<%@ include file="../include/footer.jsp" %>
+
+<script>
+
+	$("#btn-list").onclick(function() {
+		location.href = ;
+	})
+
+</script>

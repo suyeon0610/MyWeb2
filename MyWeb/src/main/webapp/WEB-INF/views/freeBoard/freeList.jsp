@@ -41,7 +41,7 @@
 						<c:forEach var="article" items="${boardList }">
 							<tr>
 								<td>${article.bno }</td>
-								<td><a href='<c:url value="/freeboard/freeDetail?bno=${article.bno}"/>'>${article.title }</a></td>
+								<td><a href='<c:url value="/freeBoard/freeDetail?bno=${article.bno}"/>'>${article.title }</a></td>
 								<td>${article.writer }</td>
 								<td>${article.regdate }</td>
 								<td>${article.updatedate }</td>
@@ -66,7 +66,7 @@
 							<li><a href="#">5</a></li>
 							<li><a href="#">다음</a></li>
 						</ul>
-						<button type="button" class="btn btn-info" onclick="location.href='<c:url value="/freeboard/freeRegist" />'">글쓰기</button>
+						<button type="button" class="btn btn-info" onclick="location.href='<c:url value="/freeBoard/freeRegist" />'">글쓰기</button>
 					</div>
 				</form>
 
