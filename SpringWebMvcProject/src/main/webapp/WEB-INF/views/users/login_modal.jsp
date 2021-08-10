@@ -53,6 +53,12 @@
 								style="ime-mode: inactive; margin-bottom: 25px; height: 40px; border: 1px solid #d9d9de"
 								placeholder="최소 8자"></td>
 						</tr>
+						
+						<!-- 자동 로그인 체크박스 -->
+						<tr>
+							<td><input type="checkbox" id="auto-login" name="autoLogin">자동 로그인</td>
+						</tr>
+						
 						<tr>
 							<td style="padding-top: 10px; text-align: center">
 								<p>
@@ -200,6 +206,10 @@
 		//각 입력값들의 유효성 검증을 위한 정규표현식을 변수로 선언
 		const getIdCheck = RegExp(/^[a-zA-Z0-9]{4,14}$/);
 		const getPwCheck = RegExp(/([a-zA-Z0-9].*[!,@,#,$,%,^,&,*,?,_,~])|([!,@,#,$,%,^,&,*,?,_,~].*[a-zA-Z0-9])/);
+		const getNameCheck = RegExp(/^[가-힣]+$/)
+		
+		//입력값 중 하나라도 만족하지 못한다면 회원가입 처리를 막기 위한 논리형 변수 선언
+		let chk1 = false, chk2 = false, chk3= false, chk4 = false;
 		
 		//회원가입 시 사용자의 입력값 검증!
 		
@@ -208,6 +218,7 @@
 			if($(this).val() === '') {
 				$(this).css('background-color', 'pink');
 				$('#idChk').html('<b style="font-size: 14px; color: red;">[아이디는 필수 정보입니다.]</b>');
+				chk1 = false;
 			} 
 			// 아이디 입력값 유효성 검사 (영문으로만 4~14글자 허용) 
 			// 정규표현식.test('검증하고싶은 값') -> return boolean type
@@ -215,11 +226,11 @@
 			else if(!getIdCheck.test($(this).val())) {
 				$(this).css('background-color', 'pink');
 				$('#idChk').html('<b style="font-size: 14px; color: red;">[영문자, 숫자조합 4-14자]</b>');
+				chk1 = false;
 			}
 			// 아이디 중복 확인(비동기 처리)
 			// 특정 로직의 실행이 끝날 때까지 기다리지 않고 먼저 코드를 실행(페이지 전환 없이 통신)
 			else {
-				
 				//아이디 중복 확인 통신을 위해 입력 값 가져오기
 				const id = $(this).val();
 				
@@ -231,20 +242,22 @@
 					headers: {
 						"Content-Type" : "application/json"
 					}, //요청 헤더 정보
-					dataType : "text", //서버로부터 응답발을 데이터의 형태
-					data : id,//서버로 전송할 데이터
-					success : function(result) { //매개변수에 통신 성공시 데이터 저장 됨
+					dataType: "text", //서버로부터 응답발을 데이터의 형태
+					data: id,//서버로 전송할 데이터
+					success: function(result) { //매개변수에 통신 성공시 데이터 저장 됨
 						//서버와의 통신 성공 시 실행할 내용
 						console.log('통신 선공!: ' + result)
 						if(result === 'available') {
 							$('#user_id').css('background-color', 'aqua');
 							$('#idChk').html('<b style="font-size: 14px; color: green;">[아이디 사용이 가능합니다.]</b>');
+							chk1 = true;
 						} else {
 							$('#user_id').css('background-color', 'pink');
 							$('#idChk').html('<b style="font-size: 14px; color: red;">[아이디가 중복되었습니다.]</b>');
+							chk1 = false;
 						}
 					},
-					error : function() {
+					error: function() {
 						console.log('통신 실패!')
 					}
 				}); //end ajax(아이디 중복 확인)
@@ -258,19 +271,211 @@
 			if($(this).val() === 'getPwCheck') {
 				$(this).css('background-color', 'pink');
 				$('#pwChk').html('<b style="font-size: 14px; color: red;">[비밀번호는 필수 정보입니다.]</b>');
+				chk2 = false;
 			}
 			//비밀번호 유효성 검사
 			else if(!getPwCheck.test($(this).val()) || $(this).val().length < 8) {
 				$(this).css('background-color', 'pink');
 				$('#pwChk').html('<b style="font-size: 14px; color: red;">[특수문자 포함 8자 이상.]</b>');
+				chk2 = false;
 			}
 			//통과
 			else {
 				$(this).css('background-color', 'aqua');
-				$('#pwChk').html('<b style="font-size: 14px; color: green;">[비밀번호 입력 완료.]</b>');
+				$('#pwChk').html('<b style="font-size: 14px; color: green;">[비밀번호 확인 완료.]</b>');
+				chk2 = true;
 			}
 			
 		}); //비밀번호 검증 끝
+		
+		$('#password_check').keyup(function() {
+			//비밀번호 확인란 공백 확인
+			if($(this).val() === '') {
+				$(this).css('background-color', 'pink');
+				$('#pwChk2').html('<b style="font-size: 14px; color: red;">[비밀번호는 필수 정보입니다.]</b>');
+				chk3 = false;
+			}
+			//비밀번호 확인랑 유효성 검사
+			else if($(this).val() !== $('#password').val()) {
+				$(this).css('background-color', 'pink');
+				$('#pwChk2').html('<b style="font-size: 14px; color: red;">[비밀번호가 일치하지 않습니다.]</b>');
+				chk3 = false;
+			}
+			//통과
+			else {
+				$(this).css('background-color', 'aqua');
+				$('#pwChk2').html('<b style="font-size: 14px; color: green;">[비밀번호 확인 완료]</b>');
+				chk3 = true;
+			}
+		}); //비밀번호 확인 검증 끝
+		
+		//이름 입력값 검증
+		$('#user_name').keyup(function() {
+			//이름값 공백 확인
+			if($(this).val() === '') {
+				$(this).css('background-color', 'pink');
+				$('#nameChk').html('<b style="font-size: 14px; color: red;">[이름은 필수 정보입니다.]</b>');
+				chk4 = false;
+			}
+			//이름값 유효성 검사
+			else if(!getNameCheck.test($(this).val())) {
+				$(this).css('background-color', 'pink');
+				$('#nameChk').html('<b style="font-size: 14px; color: red;">[이름은 한글로만 작성하세요.]</b>');
+				chk4 = false;
+			} else {
+				$(this).css('background-color', 'aqua');
+				$('#nameChk').html('<b style="font-size: 14px; color: green;">[이름 입력 완료]</b>');
+				chk4 = true;
+			}
+		}); //이름 검증 끝
+		
+		//사용자가 회원가입 버튼을 눌렀을 때 이벤트 처리
+		//사용자가 입력하는 4가지 데이터 중 단 하나라고 문제가 있다면
+		//회원 가입 처리 안됨.
+		$('#signup-btn').click(function() {
+			if(chk1 && chk2 && chk3 && chk4) {
+				//아이디 정보
+				const id = $('#user_id').val();
+				//비밀번호 정보
+				const pw = $('#password').val();
+				//이름 정보
+				const name = $('#user_name').val();
+				
+				const user = {
+						"account" : id,
+						"password" : pw,
+						"name" : name
+				};
+				
+				//비동기 통신 시작
+				$.ajax({
+					type: "POST",
+					url: "/user/" ,
+					headers: {
+						"Content-Type" : "application/json"
+					},
+					dataType: "text",
+					//javascript 객체를 JSON문자열로 변환해 주는 메서드
+					data: JSON.stringify(user),
+					success: function(result) {
+						console.log('통신 성공!' + result);
+						if(result === 'joinSuccess') {
+							alert('회원 가입을 환영합니다!');
+						} else {
+							alert('회원 가입 실패!')
+						}
+					},
+					error: function() {
+						console.log('통신 실패!');
+					}
+					
+				}); //end ajax
+				
+			} else {
+				alert('입력정보를 다시 확인하세요.')
+			}		
+		}); //회원가입 버튼 이벤트 처리 끝
+		
+		
+		///////////////////////////////////////////////////////////////////////
+		
+		//로그인 검증!
+		
+		//ID 입력값 검증(공백, 정규표현식)
+		$('#signInId').keyup(function() {
+			if($(this).val() === '') {
+				$(this).css('background-color', 'pink');
+				$('#idCheck').html('<b style="font-size: 14px; color: red;">[아이디는 필수 정보입니다.]</b>');
+				chk1 = false;
+			} else if(!getIdCheck.test($(this).val())) {
+				$(this).css('background-color', 'pink');
+				$('#idCheck').html('<b style="font-size: 14px; color: red;">[영문자, 숫자조합 4-14자]</b>');
+				chk1 = false;
+			} else {
+				$(this).css('background-color', 'aqua');
+				$('#idCheck').html('<b style="font-size: 14px; color: green;">[아이디 입력 완료]</b>');
+				chk1 = true;
+			}
+		});
+		
+		//비밀번호 입력값 검증(공백, 정규표현식)
+		$('#signInPw').keyup(function() {
+			if($(this).val() === '') {
+				$(this).css('background-color', 'pink');
+				$('#pwCheck').html('<b style="font-size: 14px; color: red;">[비밀번호는 필수 정보입니다.]</b>');
+				chk2 = false;
+			} else if(!getPwCheck.test($(this).val()) || $(this).val().length < 8) {
+				$(this).css('background-color', 'pink');
+				$('#pwCheck').html('<b style="font-size: 14px; color: red;">[특수문자 포함 8자 이상.]</b>');
+				chk2 = false;
+			} else {
+				$(this).css('background-color', 'aqua');
+				$('#pwCheck').html('<b style="font-size: 14px; color: green;">[비밀번호 입력 완료]</b>');
+				chk2 = true;
+			}
+		});
+		
+		//로그인 버튼 클릭 이벤트(ID, 비밀번호 둘 다 올바른 값이어야 이벤트 진행)
+		//chk1, chk2를 재활용해서 사용
+		$('#signIn-btn').click(function() {
+			if(chk1 && chk2) {
+				
+				/*
+				 아이디, 비밀번호 가져와서 객체로 포장
+				 비동기 통신을 진행해서 서버로 json형태로 전송
+				 console.log()로 서버가 보내온 데이터 확인
+				 아이디가 없습니다, 비밀번호가 없습니다, 로그인 성공 메세지 출력
+				 서버에 클라이언트로 데이터 전송은 text로 이루어 질 것이며
+				 idFail, pwFail, loginSuccess라는 문자열 리턴
+				 전송방식: POST, url: user/loginCheck
+				*/
+				
+				const loginId = $('#signInId').val();
+				const loginPw = $('#signInPw').val();
+				
+				//자동 로그인 체크박스 체크 여부
+				//is()함수: 상태 여부를 판단하여 논리값을 리턴
+				const autoLogin = $('#auto-login').is(':checked');
+				
+				console.log('id: ' + loginId);
+				console.log('pw: ' + loginPw);
+				console.log('auto: ' + autoLogin);
+				
+				const login = {
+						"account" : loginId,
+						"password" : loginPw,
+						"autoLogin" : autoLogin
+				};
+				
+				$.ajax({
+					type: "POST",
+					url: "/user/loginCheck",
+					headers: {
+						"Content-Type" : "application/json"
+					},
+					data: JSON.stringify(login),
+					success: function(result) {
+						if(result === 'idFail') {
+							console.log("아이디가 없습니다." + result);
+						} else if(result === 'pwFail') {
+							console.log("비밀번호가 없습니다." + result);
+							$('signInPw').val('');
+						} else if(result === 'loginSuccess') {
+							console.log("로그인 성공!" + result)
+							alert('로그인 성공!');
+							location.href = "/"
+						}
+					},
+					error: function() {
+						alert('통신 실패!');
+					}
+					
+				}); //end ajax(로그인 비동기)
+			} else{
+				alert('아이디와 비밀번호를 확인해 주세요.')
+			}
+		}); //로그인 클릭 이벤트 끝
+		
 		
 		
 	}); //end jQuery
