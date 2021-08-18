@@ -34,7 +34,7 @@
 	</select>
 	
 	<!-- 마이페이지 회원 정보 -->
-	<select id="getInfo">
+	<select id="getInfo" resultMap="MyPageMap">
 		SELECT userId,
 			   userName,
 			   userPhone1,

@@ -1,5 +1,7 @@
 package com.spring.myweb.controller;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -86,7 +88,15 @@ public class UserController {
 	}
 	
 	@GetMapping("/userMyPage")
-	public String userMyPage() { 
+	public String userMyPage(HttpSession session, Model model) { 
+		
+		//세션데이터에서 id를 뽑아서 sql문 실행
+//		String id = ((UserVO) session.getAttribute("login")).getUserId();
+		UserVO vo = (UserVO) session.getAttribute("login");
+		String userId = vo.getUserId();
+		
+		UserVO userInfo = service.getInfo(userId);
+		model.addAttribute("userInfo", userInfo);
 		
 		return "user/userMypage";
 	}
